@@ -43,10 +43,23 @@ test.describe("Packaging Technologist Functionality", () => {
 
     // Verify we're on the packaging items page
     await page.waitForURL(/.*packaging/);
-    await expect(page).toHaveURL(/.*packaging/);
+    await page.waitForTimeout(2000); // Wait for micro-frontend to load
 
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Verify packaging items table is visible
+    const iframe = page.frameLocator('iframe[title="Packaging Items"]');
+    const itemsTable = iframe.locator("table");
+    await expect(itemsTable).toBeVisible();
+
+    // Verify key column headers are present
+    const descriptionHeader = iframe.getByRole("columnheader", {
+      name: "Description",
+    });
+    const materialHeader = iframe.getByRole("columnheader", { name: "Material" });
+    const statusHeader = iframe.getByRole("columnheader", { name: "Status" });
+
+    await expect(descriptionHeader).toBeVisible();
+    await expect(materialHeader).toBeVisible();
+    await expect(statusHeader).toBeVisible();
 
     // Logout
     await logout(page);
@@ -63,10 +76,25 @@ test.describe("Packaging Technologist Functionality", () => {
 
     // Verify we're on the products page
     await page.waitForURL(/.*products/);
-    await expect(page).toHaveURL(/.*products/);
+    await page.waitForTimeout(3000); // Wait for micro-frontend to load
 
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Verify products interface is loaded
+    const iframe = page.frameLocator('iframe[title="Products"]');
+    const productsHeading = iframe.getByRole("heading", { name: "Products" });
+    await expect(productsHeading).toBeVisible();
+
+    // Verify products table is visible with data
+    const productsTable = iframe.locator("table");
+    await expect(productsTable).toBeVisible();
+
+    // Verify key column headers are present (use exact: true to avoid matching "Product Supplier")
+    const productHeader = iframe.getByRole("columnheader", { name: "Product", exact: true });
+    const divisionHeader = iframe.getByRole("columnheader", { name: "Division" });
+    const categoryHeader = iframe.getByRole("columnheader", { name: "Category", exact: true });
+
+    await expect(productHeader).toBeVisible();
+    await expect(divisionHeader).toBeVisible();
+    await expect(categoryHeader).toBeVisible();
 
     // Logout
     await logout(page);
@@ -83,10 +111,18 @@ test.describe("Packaging Technologist Functionality", () => {
 
     // Verify we're on the specifications page
     await page.waitForURL(/.*specifications/);
-    await expect(page).toHaveURL(/.*specifications/);
+    await page.waitForTimeout(3000); // Wait for micro-frontend to load
 
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Verify specifications interface is loaded
+    const iframe = page.frameLocator('iframe[title="Specifications"]');
+    const specificationsHeading = iframe.getByRole("heading", {
+      name: "Specifications",
+    });
+    await expect(specificationsHeading).toBeVisible();
+
+    // Verify specifications content is displayed (look for body content)
+    const contentBody = iframe.locator('body');
+    await expect(contentBody).toBeVisible();
 
     // Logout
     await logout(page);
@@ -103,10 +139,25 @@ test.describe("Packaging Technologist Functionality", () => {
 
     // Verify we're on the suppliers page
     await page.waitForURL(/.*suppliers/);
-    await expect(page).toHaveURL(/.*suppliers/);
+    await page.waitForTimeout(2000); // Wait for micro-frontend to load
 
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Verify suppliers interface is loaded
+    const iframe = page.frameLocator('iframe[title="Suppliers"]');
+    const suppliersHeading = iframe.getByRole("heading", { name: "Suppliers" });
+    await expect(suppliersHeading).toBeVisible();
+
+    // Verify suppliers table is visible
+    const suppliersTable = iframe.locator("table");
+    await expect(suppliersTable).toBeVisible();
+
+    // Verify key column headers are present
+    const nameHeader = iframe.getByRole("columnheader", { name: "Name" });
+    const registrationHeader = iframe.getByRole("columnheader", {
+      name: "DFFE Registration",
+    });
+
+    await expect(nameHeader).toBeVisible();
+    await expect(registrationHeader).toBeVisible();
 
     // Logout
     await logout(page);

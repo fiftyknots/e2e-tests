@@ -49,10 +49,25 @@ test.describe("Retailer User Functionality", () => {
 
     // Verify we're on the products page
     await page.waitForURL(/.*products/);
-    await expect(page).toHaveURL(/.*products/);
+    await page.waitForTimeout(3000); // Wait for micro-frontend to load
 
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Verify products interface is loaded
+    const iframe = page.frameLocator('iframe[title="Products"]');
+    const productsHeading = iframe.getByRole("heading", { name: "Products" });
+    await expect(productsHeading).toBeVisible();
+
+    // Verify products table is visible with data
+    const productsTable = iframe.locator("table");
+    await expect(productsTable).toBeVisible();
+
+    // Verify key column headers are present (use exact: true to avoid matching "Product Supplier")
+    const productHeader = iframe.getByRole("columnheader", { name: "Product", exact: true });
+    const divisionHeader = iframe.getByRole("columnheader", { name: "Division" });
+    const categoryHeader = iframe.getByRole("columnheader", { name: "Category", exact: true });
+
+    await expect(productHeader).toBeVisible();
+    await expect(divisionHeader).toBeVisible();
+    await expect(categoryHeader).toBeVisible();
 
     // Logout
     await logout(page);
@@ -67,15 +82,18 @@ test.describe("Retailer User Functionality", () => {
     await expect(erpReportsLink).toBeVisible();
     await erpReportsLink.click();
     await page.waitForURL(/.*reports/);
-    await page.waitForTimeout(8000); // Wait longer for micro-frontend to fully load
+    await page.waitForTimeout(5000); // Wait for micro-frontend to load - EPR Reports is slower
 
-    // Verify we're on the Reports page
-    await expect(page).toHaveURL(/.*reports/);
-
-    // The EPR Reports micro-frontend is loaded in an iframe
-    // Just verify that the page loaded successfully by checking for some content
-    const mainContent = page.locator("main");
-    await expect(mainContent).toBeVisible();
+    // Verify EPR Reports interface is loaded
+    const iframe = page.frameLocator('iframe[title="EPR Reports"]');
+    
+    // Verify the heading is visible
+    const heading = iframe.getByRole("heading", { name: "EPR Reports" });
+    await expect(heading).toBeVisible();
+    
+    // Verify sales data section is visible
+    const salesDataHeading = iframe.getByRole("heading", { name: "Sales Data", level: 2 });
+    await expect(salesDataHeading).toBeVisible({ timeout: 3000 });
 
     // Logout
     await logout(page);

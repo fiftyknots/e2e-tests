@@ -80,7 +80,36 @@ test.describe("QA Technologist User Functionality", () => {
 
     // Verify we're on the products page
     await page.waitForURL(/.*products/);
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(4000); // Wait for micro-frontend to load
+
+    // Verify products interface is loaded
+    const iframe = page.frameLocator('iframe[title="Products"]');
+    const productsHeading = iframe.getByRole("heading", { name: "Products" });
+    await expect(productsHeading).toBeVisible();
+
+    // Verify products page has loaded - either with a table or a "no products found" message
+    const productsTable = iframe.locator("table");
+    const noProductsMessage = iframe.getByText("No products found");
+    
+    const tableExists = await productsTable.count() > 0;
+    const noProductsMessageExists = await noProductsMessage.count() > 0;
+    
+    // At least one should be visible (either table data or no products message)
+    if (tableExists) {
+      // If table exists, verify key column headers
+      const productHeader = iframe.getByRole("columnheader", { name: "Product", exact: true });
+      const divisionHeader = iframe.getByRole("columnheader", { name: "Division" });
+      const categoryHeader = iframe.getByRole("columnheader", { name: "Category", exact: true });
+
+      await expect(productHeader).toBeVisible();
+      await expect(divisionHeader).toBeVisible();
+      await expect(categoryHeader).toBeVisible();
+    } else if (noProductsMessageExists) {
+      // Page loaded successfully but has no products - this is valid
+      await expect(noProductsMessage).toBeVisible();
+    } else {
+      throw new Error("Products page neither shows table nor 'no products found' message");
+    }
 
     // Logout
     await logout(page);

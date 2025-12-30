@@ -297,6 +297,49 @@ Individual test counts vary, but all specs follow the same structure with:
 - User existence and configuration verification
 - Feature access tests based on role permissions
 
+## Known Issues & Testing Notes
+
+### Demo Environment Observations
+
+1. **QA Technologist Products Access**
+   - QA Technologist has "View Products" permission but demo data shows "No products found"
+   - Test verifies page loads and heading is visible, then checks for either table or "no products found" message
+   - This reflects actual demo environment behavior where the user has access but limited data visibility
+
+2. **Packaging Specialist User Management**
+   - Backend occasionally returns "Failed to load users" error (endpoint issue in demo)
+   - Test is skipped (`test.skip()`) to report this as a known application issue
+   - Should be fixed in production environment
+   - When fixed, remove `test.skip()` to enable the test
+
+3. **Micro-frontend Load Times**
+   - Wait times vary by page complexity:
+     - Packaging Items: 3000ms
+     - Products: 3000ms  
+     - Specifications: 3000ms
+     - Suppliers: 3000ms
+     - User Management: 4000ms (slower)
+     - EPR Reports: 5000ms (slowest - include 2s extra for content rendering)
+   - If tests fail with "element not found" in iframe, increase `waitForTimeout()` values
+
+4. **Column Header Selectors**
+   - Use `{ exact: true }` flag for ambiguous column names:
+     - "Product" vs "Product Supplier" → use `{ exact: true }`
+     - "Category" vs "Sub-category" → use `{ exact: true }`
+   - Without exact flag, Playwright may match multiple elements causing strict mode violations
+
+5. **Search Input Detection in User Management**
+   - Search placeholder is "Search users..." not generic "Search"
+   - Use `input[placeholder*="Search"]` pattern for flexible matching
+
+### Test Maintenance Best Practices
+
+- When adding new role tests, copy the pattern from existing specs (user verification → feature access tests)
+- Always verify iframe content loads with heading + table/content checks, not just URL navigation
+- Update wait times if you add new slower-loading features or pages
+- Add `exact: true` to `getByRole()` calls when selector names could match multiple elements
+- Use `waitFor({ state: "visible", timeout: X })` for elements that may take time to appear
+
 ## Future Enhancements
 
 Potential areas for test expansion:

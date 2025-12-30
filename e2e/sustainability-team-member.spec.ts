@@ -43,10 +43,23 @@ test.describe("Sustainability Team Member Functionality", () => {
 
     // Verify we're on the packaging items page
     await page.waitForURL(/.*packaging/);
-    await expect(page).toHaveURL(/.*packaging/);
+    await page.waitForTimeout(2000); // Wait for micro-frontend to load
 
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Verify packaging items table is visible
+    const iframe = page.frameLocator('iframe[title="Packaging Items"]');
+    const itemsTable = iframe.locator("table");
+    await expect(itemsTable).toBeVisible();
+
+    // Verify key column headers are present
+    const descriptionHeader = iframe.getByRole("columnheader", {
+      name: "Description",
+    });
+    const materialHeader = iframe.getByRole("columnheader", { name: "Material" });
+    const statusHeader = iframe.getByRole("columnheader", { name: "Status" });
+
+    await expect(descriptionHeader).toBeVisible();
+    await expect(materialHeader).toBeVisible();
+    await expect(statusHeader).toBeVisible();
 
     // Logout
     await logout(page);
@@ -63,10 +76,18 @@ test.describe("Sustainability Team Member Functionality", () => {
 
     // Verify we're on the specifications page
     await page.waitForURL(/.*specifications/);
-    await expect(page).toHaveURL(/.*specifications/);
+    await page.waitForTimeout(3000); // Wait for micro-frontend to load
 
-    // Wait for content to load
-    await page.waitForTimeout(2000);
+    // Verify specifications interface is loaded
+    const iframe = page.frameLocator('iframe[title="Specifications"]');
+    const specificationsHeading = iframe.getByRole("heading", {
+      name: "Specifications",
+    });
+    await expect(specificationsHeading).toBeVisible();
+
+    // Verify specifications content is displayed (look for body content)
+    const contentBody = iframe.locator('body');
+    await expect(contentBody).toBeVisible();
 
     // Logout
     await logout(page);
