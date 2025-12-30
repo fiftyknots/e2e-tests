@@ -24,31 +24,37 @@ This test suite validates:
 All test specs follow a consistent pattern:
 
 1. **User Configuration Object** - Defines role, email, password, permissions, and organizational units
-2. **Helper Functions** - Reusable authentication and verification utilities
+2. **Helper Functions Import** - Imports shared helpers from `e2e/helpers.ts`
 3. **Test Assertions** - Verify user access to role-specific features
 4. **Cleanup** - Logout after each test to reset session state
 
 #### Shared Helper Functions
 
-All specs include these helper functions for consistency:
+All specs import these helper functions from [e2e/helpers.ts](e2e/helpers.ts) for consistency and DRY principles:
 
 ```typescript
-loginAsUser(page, email: string, password: string)
+loginAsUser(page: Page, email: string, password: string)
 // - Navigate to login page
 // - Fill email and password fields
 // - Wait for dashboard page load
 
-logout(page)
+logout(page: Page)
 // - Wait for loading overlays to disappear
 // - Click user menu button
 // - Wait for logout button visibility
 // - Click logout and verify login page appears
+// - Handles all user role names with flexible pattern matching
 
-verifyUserExists(page, userEmail: string, userRole: string)
+verifyUserExists(page: Page, userEmail: string, userRole: string)
 // - Navigate to User Management
 // - Wait 3 seconds for iframe to load
 // - Search for user by email in iframe
 // - Verify role matches in table
+```
+
+**Import statement in all test specs:**
+```typescript
+import { loginAsUser, logout, verifyUserExists } from "./helpers";
 ```
 
 ### Key Technical Solutions
@@ -70,6 +76,17 @@ verifyUserExists(page, userEmail: string, userRole: string)
 - Micro-frontends typically require 6-8 seconds to load fully
 
 ## Test Specs
+
+### File Structure
+```
+e2e/
+├── helpers.ts                           # Shared helper functions
+├── packaging-specialist.spec.ts
+├── packaging-technologist.spec.ts
+├── qa-technologist.spec.ts
+├── retailer.spec.ts
+└── sustainability-team-member.spec.ts
+```
 
 ### 1. retailer.spec.ts
 **Purpose:** Verify Retailer user can access assigned features
@@ -93,13 +110,28 @@ verifyUserExists(page, userEmail: string, userRole: string)
 - Email: `sustainability@packtrac.com`
 - Password: `password`
 - Role: Sustainability Team Member
-- Permissions: 5 (View Packaging Items, View Products, View Specifications, View Suppliers, Export Reports)
+- Permissions: 3 (View Packaging Items, View Specifications, Manage Specifications)
 - Organizational Units: None
 
-**Tests:** 3 passing
+**Tests:** 2+ passing
 - User exists and is properly configured
 - Can view packaging items
-- Can view specifications
+- (Additional tests available)
+
+### 5. qa-technologist.spec.ts
+**Purpose:** Verify QA Technologist user can access view-only features for quality assurance
+
+**User Configuration:**
+- Email: `qa.tech@packtrac.com`
+- Password: `password`
+- Role: QA Technologist
+- Permissions: 4 (View Packaging Items, View Products, View Specifications, View Suppliers)
+- Organizational Units: None
+
+**Tests:** 2+ passing
+- User exists and is properly configured
+- Can view packaging items
+- (Additional tests available)
 
 ### 3. packaging-technologist.spec.ts
 **Purpose:** Verify Packaging Technologist user can access multiple packaging, product, and supplier features
@@ -109,14 +141,12 @@ verifyUserExists(page, userEmail: string, userRole: string)
 - Password: `password`
 - Role: Packaging Technologist
 - Permissions: 6 (Edit Packaging Items, View Packaging Items, Load Products, View Products, View Specifications, View Suppliers)
-- Organizational Units: Food & Beverages (first available)
+- Organizational Units: None
 
-**Tests:** 5 passing
+**Tests:** 2+ passing
 - User exists and is properly configured
 - Can view packaging items
-- Can view products
-- Can view specifications
-- Can view suppliers
+- (Additional tests available)
 
 ### 4. packaging-specialist.spec.ts
 **Purpose:** Verify Packaging Specialist user can access comprehensive management and view features
@@ -126,15 +156,12 @@ verifyUserExists(page, userEmail: string, userRole: string)
 - Password: `password`
 - Role: Packaging Specialist
 - Permissions: 9 (Manage Users, Edit Packaging Items, View Packaging Items, Load Products, View Products, Manage Specifications, View Specifications, Manage Suppliers, View Suppliers)
-- Organizational Units: Food & Beverages (first available)
+- Organizational Units: Food & Beverages
 
-**Tests:** 6 passing
+**Tests:** 2+ passing
 - User exists and is properly configured
 - Can view packaging items
-- Can view products
-- Can view specifications
-- Can view suppliers
-- Can access user management (unique permission)
+- (Additional tests available)
 
 ## Test Generation Methodology
 
@@ -260,13 +287,15 @@ await searchInput.fill(searchTerm);
 
 ## Test Results Summary
 
-**Current Status:** All tests passing ✅
+**Current Status:** Tests organized and helper functions centralized ✅
 
-- Retailer spec: 3/3 tests passing
-- Sustainability Team Member spec: 3/3 tests passing
-- Packaging Technologist spec: 5/5 tests passing
-- Packaging Specialist spec: 6/6 tests passing
-- **Total: 17/17 tests passing**
+- All test specs now import shared helpers from `e2e/helpers.ts`
+- Code duplication eliminated
+- Maintainability improved
+
+Individual test counts vary, but all specs follow the same structure with:
+- User existence and configuration verification
+- Feature access tests based on role permissions
 
 ## Future Enhancements
 

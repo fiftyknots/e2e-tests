@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { loginAsUser, logout, verifyUserExists } from "./helpers";
 
 // QA Technologist user configuration
 const qaTechnologistUser = {
@@ -20,54 +21,6 @@ const adminUser = {
   email: "admin@example.com",
   password: "admin",
 };
-
-// Helper function to log in
-async function loginAsUser(page, email: string, password: string) {
-  await page.goto("/");
-  await page.fill('input[type="email"]', email);
-  await page.fill('input[type="password"]', password);
-  await page.click('button[type="submit"]');
-  await page.waitForURL(/.*dashboard/);
-}
-
-// Helper function to log out
-async function logout(page) {
-  const userButton = page
-    .getByRole("button", {
-      name: /Admin User|QA Technologist/,
-    })
-    .first();
-  await userButton.click();
-  const logoutButton = page.getByRole("button", { name: "Logout" });
-  await logoutButton.click();
-  await page.waitForURL(/.*login/);
-}
-
-// Helper function to verify user exists
-async function verifyUserExists(page, userEmail: string, userRole: string) {
-  // Navigate to user management
-  await page.getByRole("link", { name: "User Management" }).click();
-  await page.waitForURL(/.*\/users/);
-  await page.waitForTimeout(2000); // Wait for micro-frontend to load
-
-  // Get iframe and search for user
-  const iframe = page.frameLocator('iframe[title="User Management"]');
-  const searchInput = iframe.locator('input[placeholder="Search users..."]');
-  await searchInput.fill(userEmail);
-  await page.waitForTimeout(1500);
-
-  // Verify user exists in table
-  const userEmailCell = iframe.locator("text=" + userEmail);
-  await expect(userEmailCell).toBeVisible();
-
-  // Verify user has correct role in the same row
-  const userRow = iframe
-    .locator("table tbody tr")
-    .filter({ has: iframe.locator(`text=${userEmail}`) });
-  // Use getByRole to get exact cell match
-  const roleCell = userRow.getByRole("cell", { name: userRole, exact: true });
-  await expect(roleCell).toBeVisible();
-}
 
 test.describe("QA Technologist User Functionality", () => {
   test("QA Technologist user exists and is properly configured", async ({
