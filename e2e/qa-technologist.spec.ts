@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { loginAsUser, logout, verifyUserExists } from "./helpers";
+import { testCredentials } from "./config";
 
 // QA Technologist user configuration
 const qaTechnologistUser = {
-  email: "qa.tech@packtrac.com",
-  password: "password",
+  email: testCredentials.qaTechnologist.email,
+  password: testCredentials.qaTechnologist.password,
   fullName: "QA Technologist Test",
   role: "QA Technologist",
   permissions: [
@@ -17,10 +18,7 @@ const qaTechnologistUser = {
 };
 
 // Admin user for setup verification
-const adminUser = {
-  email: "admin@example.com",
-  password: "admin",
-};
+const adminUser = testCredentials.admin;
 
 test.describe("QA Technologist User Functionality", () => {
   test("QA Technologist user exists and is properly configured", async ({

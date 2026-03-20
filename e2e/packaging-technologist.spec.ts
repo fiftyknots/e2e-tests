@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { loginAsUser, logout, verifyUserExists } from "./helpers";
+import { testCredentials } from "./config";
 
 // Packaging Technologist user configuration
 const packagingTechUser = {
-  email: "packaging.tech@packtrac.com",
-  password: "password",
+  email: testCredentials.packagingTechnologist.email,
+  password: testCredentials.packagingTechnologist.password,
   fullName: "Packaging Technologist Test",
   role: "Packaging Technologist",
   permissions: ["Edit Packaging Items", "View Packaging Items", "Load Products", "View Products", "View Specifications", "View Suppliers"],
@@ -12,10 +13,7 @@ const packagingTechUser = {
 };
 
 // Admin user for setup verification
-const adminUser = {
-  email: "admin@example.com",
-  password: "admin",
-};
+const adminUser = testCredentials.admin;
 
 test.describe("Packaging Technologist Functionality", () => {
   // Increase timeout for these tests to 60 seconds

@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { loginAsUser, logout, verifyUserExists } from "./helpers";
+import { testCredentials } from "./config";
 
 // Retailer user configuration
 const retailerUser = {
-  email: "retailer@packtrac.com",
-  password: "password",
+  email: testCredentials.retailer.email,
+  password: testCredentials.retailer.password,
   fullName: "Retailer User Test",
   role: "Retailer",
   permissions: ["View Products", "Import Sales Data"],
@@ -12,10 +13,7 @@ const retailerUser = {
 };
 
 // Admin user for setup verification
-const adminUser = {
-  email: "admin@example.com",
-  password: "admin",
-};
+const adminUser = testCredentials.admin;
 
 test.describe("Retailer User Functionality", () => {
   // Increase timeout for these tests to 60 seconds

@@ -11,6 +11,46 @@ This test suite validates:
 - Organizational unit assignments and restrictions
 - Micro-frontend iframe interactions (User Management, EPR Reports)
 
+## Configuration
+
+### Environment Variables
+
+Test credentials are configurable via environment variables. This allows you to run tests against different environments or users without modifying test code.
+
+#### Setup
+
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Update the credentials in `.env` with your test environment values:
+   ```bash
+   TEST_ADMIN_EMAIL=packtrac-admin@acumen.zone
+   TEST_ADMIN_PASSWORD=yeAr1y-rem3dial-acce$$
+   TEST_PACKAGING_SPECIALIST_EMAIL=packaging.specialist@packtrac.com
+   TEST_PACKAGING_SPECIALIST_PASSWORD=password
+   # ... other credentials
+   ```
+
+#### Available Environment Variables
+
+- `BASE_URL` - Application URL (default: `https://pnp.packtrac.com`)
+- `TEST_ADMIN_EMAIL` - Admin user email
+- `TEST_ADMIN_PASSWORD` - Admin user password
+- `TEST_PACKAGING_SPECIALIST_EMAIL` - Packaging Specialist email
+- `TEST_PACKAGING_SPECIALIST_PASSWORD` - Packaging Specialist password
+- `TEST_PACKAGING_TECHNOLOGIST_EMAIL` - Packaging Technologist email
+- `TEST_PACKAGING_TECHNOLOGIST_PASSWORD` - Packaging Technologist password
+- `TEST_QA_TECHNOLOGIST_EMAIL` - QA Technologist email
+- `TEST_QA_TECHNOLOGIST_PASSWORD` - QA Technologist password
+- `TEST_RETAILER_EMAIL` - Retailer email
+- `TEST_RETAILER_PASSWORD` - Retailer password
+- `TEST_SUSTAINABILITY_EMAIL` - Sustainability Team Member email
+- `TEST_SUSTAINABILITY_PASSWORD` - Sustainability Team Member password
+
+**Note:** `.env` files are automatically loaded by Playwright and should not be committed to version control (included in `.gitignore`).
+
 ## Testing Framework & Methodology
 
 ### Technology Stack

@@ -1,5 +1,9 @@
 /.vscode/
 
+# Environment variables and credentials
+.env
+.env.local
+
 # Playwright
 /node_modules/
 /test-results/

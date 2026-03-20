@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { loginAsUser, logout, verifyUserExists } from "./helpers";
+import { testCredentials } from "./config";
 
 // Sustainability Team Member user configuration
 const sustainabilityUser = {
-  email: "sustainability@packtrac.com",
-  password: "password",
+  email: testCredentials.sustainability.email,
+  password: testCredentials.sustainability.password,
   fullName: "Sustainability Team Member Test",
   role: "Sustainability Team Member",
   permissions: ["View Packaging Items", "View Specifications", "Manage Specifications"],
@@ -12,10 +13,7 @@ const sustainabilityUser = {
 };
 
 // Admin user for setup verification
-const adminUser = {
-  email: "admin@example.com",
-  password: "admin",
-};
+const adminUser = testCredentials.admin;
 
 test.describe("Sustainability Team Member Functionality", () => {
   // Increase timeout for these tests to 60 seconds
