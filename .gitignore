@@ -13,3 +13,4 @@
 /playwright/.auth/
 
 *.log
+.DS_Store
